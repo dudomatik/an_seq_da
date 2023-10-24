@@ -1,3 +1,4 @@
+
 library(fpp2) #yields the data sets a10 and other needed dependencies
 
 #hint: clean your R session deleting any object with the shortcut
@@ -124,3 +125,59 @@ ggAcf(res) + ggtitle("ACF of residuals")
 
 cvm.test(res[-1], "pnorm", mean = 0, sd=sd(res[-1]))$p.value
 checkresiduals(naive(goog200))
+
+# 24.10.
+
+autoplot(gas)
+windowTrain = window(gas, start = 1970, end = 1980)
+windowTest = window(gas, start = 1980, end = 1990)
+#autoplot(windowTrain)
+
+gasFitAdd = hw(windowTrain, seasonal = "additive", h= 120)
+gasFitMult = hw(windowTrain, seasonal = "multiplicative", h= 120)
+
+summary(gasFitAdd)
+summary(gasFitMult)
+
+accuracy(gasFitAdd, windowTest)
+accuracy(gasFitMult, windowTest)
+
+autoplot(window(gas, start = 1980, end = 1990)) + autolayer(gasFitAdd, color="blue", PI=FALSE) + autolayer(gasFitsumMult, color = "red", PI = FALSE)
+
+help(chicken)
+autoplot(chicken)
+
+train<- window(chicken, end=1980)
+test<- window(chicken, start=1981)
+sesFit<- ses(train, h =length(test))
+holtFit <- holt (train, h =length(test))
+
+summary(sesFit)
+summary(holtFit)
+
+sesFit$model$mse
+holtFit$model$mse
+
+sesFit$model$aic
+holtFit$model$aic
+
+accuracy(sesFit, test)
+accuracy(holtFit, test)
+
+#extra parameters caused overfitting!
+
+autoplot(chicken) + autolayer(sesFit, color="blue")
+autoplot(chicken) + autolayer(holtFit, color="blue")
+
+autoplot(usdeaths)
+etsFit = ets(usdeaths)
+autoplot(etsFit)
+
+fcUSdeaths = forecast(ets(usdeaths), h=10)
+
+autoplot(usdeaths) + autolayer(fcUSdeaths)
+
+autoplot(ausbeer)
+etsFitAusBeer = ets(ausbeer)
+fcAusBeer = forecast(ets(ausbeer), h = 20)
+autoplot(ausbeer) + autolayer(fcAusBeer)
